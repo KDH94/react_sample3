@@ -1,0 +1,29 @@
+.defaultDisplay {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin: 100px;
+    padding: 20px;
+}
+
+.profileDefault, .profileDefault span {
+    float: left;
+    font-weight: bold;
+}
+.profileDefault span {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.profileDefault span div {
+    font-weight: normal;
+}
+.endLine {
+    clear: both;
+}
+
+.profileImg {
+    border-radius: 50%;
+    width: 100px;
+    margin: 10px;
+    float: left;
+}
