@@ -1,0 +1,28 @@
+.login-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.login-box {
+    border-radius: 5px;
+    padding: 10px auto;
+    margin-top: 100px;
+}
+.login-container input {
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+
+}
+
+.login-btn {
+    color: white;
+    background-color: rgb(48, 154, 48);
+    border-radius: 5px;
+    border: none;
+    width: 180px;
+    margin-top: 10px;
+}
+.login-btn:hover {
+    background-color: rgb(18, 124, 18);
+}

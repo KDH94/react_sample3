@@ -1,24 +1,30 @@
 import Menu from '../components/Menu';
+import React, { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
+import './Home.css';
 
 function Home() {
-    const list = [
-        {id: 1, title: '첫 번째 게시물', content: '첫 번째 게시물입니다.'},
-        {id: 2, title: '두 번째 게시물', content: '두 번째 게시물입니다.'},
-        {id: 3, title: '세 번째 게시물', content: '세 번째 게시물입니다.'},
-        {id: 1, title: '첫 번째 게시물', content: '첫 번째 게시물입니다.'},
-        {id: 2, title: '두 번째 게시물', content: '두 번째 게시물입니다.'},
-        {id: 3, title: '세 번째 게시물', content: '세 번째 게시물입니다.'},
-        {id: 1, title: '첫 번째 게시물', content: '첫 번째 게시물입니다.'},
-        {id: 2, title: '두 번째 게시물', content: '두 번째 게시물입니다.'},
-        {id: 3, title: '세 번째 게시물', content: '세 번째 게시물입니다.'},
-    ];
+    let [boardList, setBoardList] = useState([]);
+
+    useEffect(() => {
+        async function fetchBoardList() {
+            try {
+                const res = await fetch(`http://localhost:4000/snsBoardList.dox`);
+                const jsonData = await res.json();
+                setBoardList(jsonData);
+            } catch (error) {
+                console.log("에러!:", error);
+            }
+        }
+        fetchBoardList();
+    }, []);
 
     return (
-        <div>
-            <h1 className="text-center my-5">홈!!!</h1>
+        <div className="container">
+            <h1 className="text-center my-5">게시판</h1>
             <div className="row">
-                {list.map(item=>(
-                    <div className="col-sm-6 col-md-4 col-lg-3" key={item.id}>
+                {boardList.map(item => (
+                    <div className="col-sm-6 col-md-5 col-lg-4" key={item.id}>
                         <Menu title={item.title} content={item.content} />
                     </div>
                 ))}
