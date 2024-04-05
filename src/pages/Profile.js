@@ -3,17 +3,15 @@ import Post from '../components/Menu';
 import React, { useState, useEffect } from 'react';
 
 function Profile() {
-    let [userInfo, setUserInfo] = useState({ userName: "", follower: 0, following: 0, posts: 0, profile: "", profileImage: "" });
-    let [boardList, setBoardList] = useState([]);
-    let [userId, setUserId] = useState("");
-    //let userId = sessionStorage.getItem("userId");
-    setUserId(sessionStorage.getItem("userId"));
+    const [userInfo, setUserInfo] = useState({ userName: "", follower: 0, following: 0, posts: 0, profile: "", profileImage: "" });
+    const [boardList, setBoardList] = useState([]);
+
     useEffect(() => {
         async function fetchUserInfo() {
             try {
-                const response = await fetch(`http://localhost:4000/snsUserInfo.dox?userId=${userId}`);
+                const response = await fetch(`http://localhost:4000/snsUserInfo.dox?userId=${sessionStorage.getItem("userId")}`);
                 const jsonData = await response.json();
-                console.log("유저프로필==>",jsonData);
+                console.log("유저프로필==>", jsonData);
                 //jsonData.posts = 20;
                 //jsonData.profileImage = 'https://img.segye.com/content/image/2017/07/22/20170722505000.jpg';
                 setUserInfo(jsonData);
@@ -23,7 +21,7 @@ function Profile() {
         }
         async function fetchUserBoardList() {
             try {
-                const response = await fetch(`http://localhost:4000/snsUserBoardList.dox?userId=${userId}`);
+                const response = await fetch(`http://localhost:4000/snsUserBoardList.dox?userId=${sessionStorage.getItem("userId")}`);
                 const jsonData = await response.json();
                 setBoardList(jsonData);
             } catch (error) {
@@ -62,7 +60,7 @@ function Profile() {
                 <div className="profile-posts">
                     <h3>내가 작성한 게시글</h3>
                     <div className="posts-list">
-                        {boardList.map(post => (
+                        {boardList.length > 0 && boardList.map(post => (
                             <Post key={post.boardNo} title={post.title} content={post.content} boardNo={post.boardNo} />
                         ))}
                     </div>
