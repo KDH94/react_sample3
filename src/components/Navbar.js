@@ -25,8 +25,7 @@ function Navbar() {
 
     useEffect(() => {
         const tempUserId = sessionStorage.getItem("userId");
-        setUserId(tempUserId);
-        console.log("userId==>", sessionStorage);
+        setUserId(JSON.parse(tempUserId));
     }, []);
 
     const submitLogin = async () => {
@@ -36,8 +35,8 @@ function Navbar() {
             console.log("jsonData==>", jsonData);
             if (jsonData.result === "success") {
                 sessionStorage.setItem("userId", JSON.stringify(jsonData.userId));
-                console.log("userId==>", sessionStorage);
-                window.location.href = "http://localhost:3000";
+                console.log("sessionStorage==>", sessionStorage);
+                //window.location.href = "http://localhost:3000";
                 navigate("/");
             } else {
                 alert("로그인 실패!");
@@ -53,18 +52,9 @@ function Navbar() {
         setUserId();
 
         try {
-            const response = await fetch(`/snsWriteBoard.dox?userId=${userId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ title, content })
-            });
-
+            const response = await fetch(`/snsWriteBoard.dox?userId=${userId}&title=${title}&content=${content}`);
             const jsonData = await response.json();
-            console.log(jsonData); // 서버에서 받은 응답을 확인
-
-            // 작성 후에 다른 동작을 수행하거나 페이지를 리디렉션할 수 있음
+            console.log(jsonData);
             navigate('/'); // 작성 후에 홈 화면으로 이동
         } catch (error) {
             console.error("Error:", error);
@@ -85,16 +75,16 @@ function Navbar() {
             <nav className='nav flex-column'>
                 <ul className='link-navbar'>
                     <li className={location.pathname === "/" ? "nav-item active" : "nav-item"}>
-                        <Link to="/" className="nav-link"><HomeIcon width="20" height="20" /> 홈</Link>
+                        <Link to={"/"} className="nav-link"><HomeIcon width="20" height="20" /> 홈</Link>
                     </li>
                     <li className={location.pathname === "/profile" ? "nav-item active" : "nav-item"}>
-                        <Link to="/profile" className="nav-link"><ProfileIcon width="20" height="20" /> 프로필</Link>
+                        <Link to={"/profile"} className="nav-link"><ProfileIcon width="20" height="20" /> 프로필</Link>
                     </li>
                     <li className={location.pathname === "/search" ? "nav-item active" : "nav-item"}>
-                        <Link to="/search" className="nav-link"><SearchIcon width="20" height="20" /> 검색</Link>
+                        <Link to={"/search"} className="nav-link"><SearchIcon width="20" height="20" /> 검색</Link>
                     </li>
                     <li className="nav-item">
-                        {JSON.parse(sessionStorage.getItem("userId")) == undefined ? 
+                        {JSON.parse(sessionStorage.getItem("userId")) === undefined ? 
                         <Button className="nav-link" onClick={openModalLogin}>
                             <LoginIcon width="20" height="20" /> 로그인
                         </Button> :

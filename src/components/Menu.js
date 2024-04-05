@@ -1,11 +1,14 @@
 import './Menu.css'
 import React from "react";
+import { Link } from 'react-router-dom';
 
 function Menu(props) {
     return (
         <div className='menu'>
-            <div className='menu-title'>{props.title}</div>
-            <div className='menu-content'>{props.content}</div>
+            <Link to={"/"}>
+                <div className='menu-title'>{props.title}</div>
+                <div className='menu-content'>{props.content}</div>
+            </Link>
         </div>
     )
 }

@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import WriteBoard from './pages/WriteBoard';
+import View from './pages/View';
 import Navbar from './components/Navbar';
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,6 +20,7 @@ function App() {
           <Route path="/profile" element={<Profile/>}></Route>
           <Route path="/login" element={<Login/>}></Route>
           <Route path="/write" element={<WriteBoard/>}></Route>
+          <Route path="/view" element={<View/>}></Route>
         </Routes>
       </Router>
     </div>
