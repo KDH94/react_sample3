@@ -1,32 +1,43 @@
-.instagram-post {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 20px;
-  }
-  
-  .post-header {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-  }
-  
-  .avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
-  .username {
-    font-weight: bold;
-  }
-  
-  .post-image img {
-    width: 100%;
-    height: auto;
-  }
-  
-  .post-caption {
-    padding: 10px;
-  }
-  
+.view-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.post {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 500px;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.username {
+  font-weight: bold;
+  margin: 0;
+}
+
+.posted-time {
+  color: #777;
+  margin: 0;
+}
+
+.post-content {
+  margin-bottom: 10px;
+}
+
+.post-title {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.content-text {
+  margin-bottom: 10px;
+}

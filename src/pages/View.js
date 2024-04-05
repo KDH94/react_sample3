@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import './View.css'
 
 export default function View(props) {
-    let [board, setBoard] = useState({ boardNo: 0, userId: "", title: "", content: "", cdate: "" });
+    const [board, setBoard] = useState({});
     useEffect(() => {
         async function fetchBoardView() {
             try {
-                const response = await fetch(`http://localhost:4000/snsBoardView?boardNo=${props.boardNo}`);
-                const jsonData = response.json();
+                const response = await fetch(`http://localhost:4000/snsBoardView.dox?boardNo=1`);
+                const jsonData = await response.json();
+                jsonData.postImage = 
+                console.log(jsonData);
                 setBoard(jsonData);
             } catch (error) {
                 console.log("boardView error:", error);
@@ -17,14 +19,16 @@ export default function View(props) {
     }, [])
 
     return (
-        <div className="instagram-style-post">
-            <div className="post-header">
-                <span className="username">{board.userId}</span>
-                <span className="timestamp">{board.cdate}</span>
-            </div>
-            <div className="post-content">
-                <h3 className="post-title">{board.title}</h3>
-                <p className="post-text">{board.content}</p>
+        <div className="view-container">
+            <div className="post">
+                <div className="post-header">
+                    <p className="username">{board.userId}</p>
+                    <p className="posted-time">{board.cdate}</p>
+                </div>
+                <div className="post-content">
+                    <h2 className="post-title">{board.title}</h2>
+                    <p className="content-text">{board.content}</p>
+                </div>
             </div>
         </div>
     )

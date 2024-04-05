@@ -21,7 +21,7 @@ function Navbar() {
 
     useEffect(() => {
         const sessionUserId = sessionStorage.getItem("userId");
-        if(sessionUserId != null || sessionUserId != undefined) {
+        if (sessionUserId != null || sessionUserId != 'undefined') {
             setUserId(sessionUserId);
         }
     }, []);
@@ -41,9 +41,9 @@ function Navbar() {
     };
 
     const onLogout = () => {
-        if(window.confirm("정말 로그아웃할까요?")) {
+        if (window.confirm("정말 로그아웃할까요?")) {
             sessionStorage.clear(); // 세션 전부 제거
-            window.location.href="http://localhost:3000/login";
+            window.location.href = "http://localhost:3000/login";
         } else {
             return;
         }
@@ -58,22 +58,24 @@ function Navbar() {
                         <Link to={"/"} className="nav-link"><HomeIcon width="20" height="20" /> 홈</Link>
                     </li>
                     <li className={location.pathname === "/profile" ? "nav-item active" : "nav-item"}>
-                        {sessionStorage.getItem("userId") != null && <Link to={"/profile"} className="nav-link"><ProfileIcon width="20" height="20" /> 프로필</Link>}
+                        {sessionStorage.getItem("userId") != null &&
+                            <Link to={"/profile"} className="nav-link"><ProfileIcon width="20" height="20" /> 프로필</Link>}
                     </li>
                     <li className={location.pathname === "/search" ? "nav-item active" : "nav-item"}>
                         <Link to={"/search"} className="nav-link"><SearchIcon width="20" height="20" /> 검색</Link>
                     </li>
                     <li className={location.pathname === "/login" ? "nav-item active" : "nav-item"}>
-                        {sessionStorage.getItem("userId") == null ? 
-                        <Link to={"/login"} className="nav-link">
-                            <LoginIcon width="20" height="20" /> 로그인
-                        </Link> :
-                        <Link className="nav-link" onClick={onLogout}>
-                            <LogoutIcon width="20" height="20" /> 로그아웃
-                        </Link>}
+                        {sessionStorage.getItem("userId") == null ?
+                            <Link to={"/login"} className="nav-link">
+                                <LoginIcon width="20" height="20" /> 로그인
+                            </Link> :
+                            <Link className="nav-link" onClick={onLogout}>
+                                <LogoutIcon width="20" height="20" /> 로그아웃
+                            </Link>}
                     </li>
                     <li className="nav-item">
-                        {sessionStorage.getItem("userId") != null && <Link className="nav-link" onClick={openModalWrite}>
+                        {sessionStorage.getItem("userId") != null &&
+                        <Link className="nav-link" onClick={openModalWrite}>
                             <WriteIcon width="20" height="20" /> 글 작성
                         </Link>}
                     </li>

@@ -23,6 +23,21 @@
     width: 180px;
     margin-top: 10px;
 }
+
 .login-btn:hover {
     background-color: rgb(18, 124, 18);
+}
+
+.join-btn {
+    color: rgb(48, 154, 48);
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid rgb(48, 154, 48);
+    width: 180px;
+    margin-top: 10px;
+}
+
+.join-btn:hover {
+    color: white;
+    background-color: rgb(48, 154, 48);
 }
