@@ -181,6 +181,14 @@ app.get('/snsBoardList.dox', (req, res) => {
   });
 });
 
+app.get('/snsBoardView.dox', (req, res) => {
+  var map = req.query;
+  connection.query("SELECT B.*, DATE_FORMAT(CDATETIME, '%y년 %c월 %e일 %H시 %i분 %s초') AS cdate FROM TBL_SNS_BOARD B WHERE BOARDNO = ?", [map.boardNo], (error, results, fields) => {
+    if (error) throw error;
+    res.send(results[0]);
+  });
+});
+
 app.get('/snsUserBoardList.dox', (req, res) => {
   var map = req.query;
   connection.query("SELECT * FROM TBL_SNS_BOARD WHERE USERID = ?", [map.userId], (error, results, fields) => {
