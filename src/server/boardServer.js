@@ -4,6 +4,8 @@ const mysql = require('mysql');
 const path = require('path');
 const app = express();
 const session = require('express-session');
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 app.use(cors());
 
 // ejs 설정
@@ -154,7 +156,7 @@ app.get('/userIdCheck.dox', (req, res) => {
     }
   });
 });
-
+// -------------------------------------------------------------------------
 app.get('/snsUserInfo.dox', (req, res) => {
   var map = req.query;
   connection.query("SELECT U.*, COUNT(*) AS posts FROM tbl_sns_user U INNER JOIN tbl_sns_board B ON U.userId = B.userId WHERE U.USERID = ?", [map.userId], (error, results, fields) => {
@@ -183,6 +185,7 @@ app.get('/snsBoardList.dox', (req, res) => {
 
 app.get('/snsBoardView.dox', (req, res) => {
   var map = req.query;
+  console.log("snsBoardView 맵==>",map);
   connection.query("SELECT B.*, DATE_FORMAT(CDATETIME, '%y년 %c월 %e일 %H시 %i분 %s초') AS cdate FROM TBL_SNS_BOARD B WHERE BOARDNO = ?", [map.boardNo], (error, results, fields) => {
     if (error) throw error;
     res.send(results[0]);
@@ -207,16 +210,13 @@ app.get('/snsWriteBoard.dox', (req, res) => {
   connection.query("INSERT INTO TBL_SNS_BOARD VALUES (NULL, ?, ?, ?)", [map.userId, map.title, map.content], (error, results, fields) => {
     if (error) throw error;
 
-    if (results.length == 0) {
-      res.send({ result: "게시글 없음" });
-    } else {
-      res.send(results[0]);
-    }
+    res.send(results[0]);
+
   });
 });
 
-app.get('/snsUserLogin.dox', (req, res) => {
-  var map = req.query;
+app.post('/snsUserLogin.dox', (req, res) => {
+  var map = req.body;
   connection.query("SELECT * FROM TBL_SNS_USER WHERE USERID = ? AND USERPWD = ?", [map.userId, map.userPwd], (error, results, fields) => {
     if (error || results.length == 0) {
       console.log("로그인 실패");
@@ -226,6 +226,29 @@ app.get('/snsUserLogin.dox', (req, res) => {
       console.log("로그인 성공");
       res.send({ result: "success", userId: results[0].USERID });
     }
+  });
+});
+
+app.get('/snsUserBoardList.dox', (req, res) => {
+  var map = req.query;
+  connection.query("SELECT * FROM TBL_SNS_BOARD WHERE USERID = ?", [map.userId], (error, results, fields) => {
+    if (error) throw error;
+
+    if (results.length == 0) {
+      res.send({ result: "게시글 없음" });
+    } else {
+      res.send(results);
+    }
+  });
+});
+
+app.post('/snsUserJoin.dox', (req, res) => {
+  var map = req.body;
+  connection.query("INSERT INTO TBL_SNS_USER (userId, userPwd, userName, profile, profileImage) VALUES (?, ?, ?, ?, ?)", [map.userId, map.userPwd, map.userName, map.profile, map.profileImage], (error, results, fields) => {
+    if (error) throw error;
+
+    res.send(results[0]);
+
   });
 });
 
