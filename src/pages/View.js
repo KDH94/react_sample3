@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import './View.css'
 
 export default function View(props) {
+    const {boardNo} = useParams();
     const [board, setBoard] = useState({});
     useEffect(() => {
         async function fetchBoardView() {
             try {
-                const response = await fetch(`http://localhost:4000/snsBoardView.dox?boardNo=1`);
+                const response = await fetch(`http://localhost:4000/snsBoardView.dox?boardNo=${boardNo}`);
                 const jsonData = await response.json();
                 jsonData.postImage = 
                 console.log(jsonData);

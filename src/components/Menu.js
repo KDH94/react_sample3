@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 function Menu(props) {
     return (
         <div className='menu'>
-            <Link to={`/view?boardNo=${props.boardNo}`}>
+            <Link to={`/view/${props.boardNo}`}>
                 <div className='menu-title'>{props.title}</div>
                 <div className='menu-content'>{props.content}</div>
             </Link>

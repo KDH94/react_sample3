@@ -21,7 +21,7 @@ function App() {
           <Route path="/profile" element={<Profile/>}></Route>
           <Route path="/login" element={<Login/>}></Route>
           <Route path="/write" element={<WriteBoard/>}></Route>
-          <Route path="/view" element={<View/>}></Route>
+          <Route path="/view/:boardNo" element={<View/>}></Route>
           <Route path="/join" element={<Join/>}></Route>
         </Routes>
       </Router>
