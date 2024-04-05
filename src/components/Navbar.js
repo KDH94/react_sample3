@@ -7,6 +7,7 @@ import { ReactComponent as ProfileIcon } from "../assets/profile_icon.svg";
 import { ReactComponent as SearchIcon } from "../assets/search_icon.svg";
 import { ReactComponent as WriteIcon } from "../assets/write_icon.svg";
 import { ReactComponent as LoginIcon } from "../assets/login_icon.svg";
+import { ReactComponent as LogoutIcon } from "../assets/logout_icon.svg";
 
 function Navbar() {
     const [showModalWrite, setShowModalWrite] = useState(false);
@@ -34,20 +35,21 @@ function Navbar() {
             const jsonData = await response.json();
             console.log("jsonData==>", jsonData);
             if (jsonData.result === "success") {
-                sessionStorage.setItem('userId', jsonData.userId);
+                sessionStorage.setItem("userId", JSON.stringify(jsonData.userId));
                 console.log("userId==>", sessionStorage);
                 window.location.href = "http://localhost:3000";
+                navigate("/");
             } else {
                 alert("로그인 실패!");
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error:", error);
         }
     }
 
     const submitWrite = async () => {
-        const title = document.querySelector('#title').value;
-        const content = document.querySelector('#content').value;
+        const title = document.querySelector("#title").value;
+        const content = document.querySelector("#content").value;
         setUserId();
 
         try {
@@ -59,15 +61,24 @@ function Navbar() {
                 body: JSON.stringify({ title, content })
             });
 
-            const data = await response.json();
-            console.log(data); // 서버에서 받은 응답을 확인
+            const jsonData = await response.json();
+            console.log(jsonData); // 서버에서 받은 응답을 확인
 
             // 작성 후에 다른 동작을 수행하거나 페이지를 리디렉션할 수 있음
             navigate('/'); // 작성 후에 홈 화면으로 이동
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error:", error);
         }
     };
+
+    const onLogout = () => {
+        if(window.confirm("정말 로그아웃할까요?")) {
+            sessionStorage.clear(); // 세션 전부 제거
+            navigate('/'); // 로그아웃 후 홈 화면으로 이동
+        } else {
+            return;
+        }
+    }
 
     return (
         <>
@@ -83,9 +94,13 @@ function Navbar() {
                         <Link to="/search" className="nav-link"><SearchIcon width="20" height="20" /> 검색</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" onClick={openModalLogin}>
+                        {JSON.parse(sessionStorage.getItem("userId")) == undefined ? 
+                        <Button className="nav-link" onClick={openModalLogin}>
                             <LoginIcon width="20" height="20" /> 로그인
-                        </Link>
+                        </Button> :
+                        <Link className="nav-link" onClick={onLogout}>
+                            <LogoutIcon width="20" height="20" /> 로그아웃
+                        </Link>}
                     </li>
                     <li className="nav-item">
                         <Link className="nav-link" onClick={openModalWrite}>
@@ -110,7 +125,7 @@ function Navbar() {
                     <Button variant="secondary" onClick={closeModalLogin}>
                         닫기
                     </Button>
-                    <Button variant="primary" onClick={submitLogin}>
+                    <Button variant="primary" type="submit" onClick={submitLogin}>
                         로그인
                     </Button>
                 </Modal.Footer>
