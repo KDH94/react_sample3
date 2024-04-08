@@ -5,6 +5,7 @@ const path = require('path');
 const app = express();
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const multer = require('multer');
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -27,6 +28,21 @@ const connection = mysql.createConnection({
   user: 'root',
   password: 'test1234',
   database: 'test'
+});
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'img/'); // 파일이 저장될 경로 설정
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname); // 파일 이름 설정
+  }
+});
+const upload = multer({ storage: storage });
+
+app.post('/upload', upload.single('file'), (req, res) => {
+  console.log('파일', req.file);
+  res.send({result : "success"});
 });
 
 connection.connect((err) => {
@@ -72,7 +88,7 @@ app.get('/userLogin', function (req, res) {
 });
 
 app.get('/boardList.dox', (req, res) => {
-  var map = req.query;
+  let map = req.query;
   connection.query(`SELECT B.*, DATE_FORMAT(CDATETIME, '%Y-%m-%d %p %h:%i') AS cdate FROM TBL_BOARD B`, (error, results, fields) => {
     if (error) throw error;
     //console.log(req.session);
@@ -81,7 +97,7 @@ app.get('/boardList.dox', (req, res) => {
 });
 
 app.get('/boardView.dox', (req, res) => {
-  var map = req.query;
+  let map = req.query;
   connection.query("SELECT B.*, DATE_FORMAT(CDATETIME, '%y년 %c월 %e일 %H시 %i분 %s초') AS cdate FROM TBL_BOARD B WHERE BOARDNO = ?", [map.boardNo], (error, results, fields) => {
     if (error) throw error;
     res.send(results[0]);
@@ -89,7 +105,7 @@ app.get('/boardView.dox', (req, res) => {
 });
 
 app.get('/boardRemove.dox', (req, res) => {
-  var map = req.query;
+  let map = req.query;
   connection.query("DELETE FROM TBL_BOARD WHERE BOARDNO = ?", [map.boardNo], (error, results, fields) => {
     if (error) {
       console.error('Error deleting board into database: ' + error.stack);
@@ -102,7 +118,7 @@ app.get('/boardRemove.dox', (req, res) => {
 });
 
 app.get('/boardAdd.dox', (req, res) => {
-  var map = req.query;
+  let map = req.query;
   console.log("session userId ==> ", req.session.userId);
   connection.query("INSERT INTO TBL_BOARD VALUES (NULL, ?, ?, ?, NOW())", [map.title, map.contents, req.session.userId], (error, results, fields) => {
     if (error) {
@@ -116,7 +132,7 @@ app.get('/boardAdd.dox', (req, res) => {
 });
 
 app.get('/boardEdit.dox', (req, res) => {
-  var map = req.query;
+  let map = req.query;
   connection.query("UPDATE TBL_BOARD SET TITLE = ?, CONTENTS = ? WHERE BOARDNO = ?", [map.title, map.contents, map.boardNo], (error, results, fields) => {
     if (error) {
       console.error('Error updating board into database: ' + error.stack);
@@ -129,7 +145,7 @@ app.get('/boardEdit.dox', (req, res) => {
 });
 
 app.get('/userLogin.dox', (req, res) => {
-  var map = req.query;
+  let map = req.query;
   connection.query("SELECT * FROM TBL_USER WHERE USERID = ? AND USERPWD = ?", [map.userId, map.userPwd], (error, results, fields) => {
     if (error || results.length == 0) {
       console.error('로그인 실패: ' + error.stack);
@@ -145,7 +161,7 @@ app.get('/userLogin.dox', (req, res) => {
 });
 
 app.get('/userIdCheck.dox', (req, res) => {
-  var map = req.query;
+  let map = req.query;
   connection.query("SELECT * FROM TBL_USER WHERE USERID = ?", [map.userId], (error, results, fields) => {
     if (error) throw error;
     if (results.length == 0) {
@@ -158,7 +174,7 @@ app.get('/userIdCheck.dox', (req, res) => {
 });
 // -------------------------------------------------------------------------
 app.get('/snsUserInfo.dox', (req, res) => { // 유저 정보 출력
-  var map = req.query;
+  let map = req.query;
   connection.query("SELECT U.*, COUNT(*) AS posts FROM tbl_sns_user U INNER JOIN tbl_sns_board B ON U.userId = B.userId WHERE U.USERID = ?", [map.userId], (error, results, fields) => {
     if (error) throw error;
 
@@ -171,7 +187,7 @@ app.get('/snsUserInfo.dox', (req, res) => { // 유저 정보 출력
 });
 
 app.get('/snsBoardList.dox', (req, res) => { // 게시글 목록 출력
-  var map = req.query;
+  let map = req.query;
   connection.query("SELECT * FROM TBL_SNS_BOARD", (error, results, fields) => {
     if (error) throw error;
 
@@ -184,7 +200,7 @@ app.get('/snsBoardList.dox', (req, res) => { // 게시글 목록 출력
 });
 
 app.get('/snsBoardView.dox', (req, res) => { // 지정한 게시글 출력
-  var map = req.query;
+  let map = req.query;
   connection.query("SELECT B.*, DATE_FORMAT(CDATETIME, '%y년 %c월 %e일 %H시 %i분 %s초') AS cdate FROM TBL_SNS_BOARD B WHERE BOARDNO = ?", [map.boardNo], (error, results, fields) => {
     if (error) throw error;
     res.send(results[0]);
@@ -192,7 +208,7 @@ app.get('/snsBoardView.dox', (req, res) => { // 지정한 게시글 출력
 });
 
 app.get('/snsUserBoardList.dox', (req, res) => { // 해당 유저가 작성한 게시글 목록 출력
-  var map = req.query;
+  let map = req.query;
   connection.query("SELECT * FROM TBL_SNS_BOARD WHERE USERID = ?", [map.userId], (error, results, fields) => {
     if (error) throw error;
 
@@ -207,7 +223,7 @@ app.get('/snsUserBoardList.dox', (req, res) => { // 해당 유저가 작성한 �
 app.post('/snsWriteBoard.dox', (req, res) => { // 게시글 작성
   const map = req.body;
 
-  console.log("map==>>>>", req.body);
+  console.log("server map===>>>", req.body);
   // 게시글 정보 삽입
   connection.query("INSERT INTO TBL_SNS_BOARD VALUES (NULL, ?, ?, ?, NOW())", [map.userId, map.title, map.content], (error, results, fields) => {
     if (error) throw error;
@@ -216,21 +232,13 @@ app.post('/snsWriteBoard.dox', (req, res) => { // 게시글 작성
     const boardNo = results.insertId; // 새로 생성된 게시글의 번호 가져오기
 
     // 이미지 파일 정보 삽입
-    const fileName = req.body.fileName; // 파일명
-    const fileOrgName = req.body.fileOrgName; // 원본 파일명
-    const filePaths = req.files.map(file => file.path); // 이미지 파일 경로들
-    if (filePaths.length > 0) {
-      // 각 이미지 파일에 대해 반복하여 삽입
-      filePaths.forEach((filePath, index) => {
-        // 각 이미지 파일에 대한 파일명 및 원본 파일명 가져오기
-        const fileIdx = index < fileName.length ? index : fileName.length - 1;
-        const fileNameForDB = fileName[fileIdx];
-        const fileOrgNameForDB = fileOrgName[fileIdx];
-        // TBL_SNS_IMAGES 테이블에 이미지 파일 정보 삽입
-        connection.query("INSERT INTO TBL_SNS_IMAGES (boardNo, filePath, fileName, fileOrgName) VALUES (?, ?, ?, ?)", [boardNo, filePath, fileNameForDB, fileOrgNameForDB], (error, results, fields) => {
-          if (error) throw error;
-          console.log("이미지 파일이 성공적으로 삽입되었습니다.");
-        });
+    const filePaths = req.body.files; // 이미지 파일 경로들
+    for (let i = 0; i < filePaths.length; i++) {
+      const fileName = filePaths[i].fileName; // 파일명
+      const fileOrgName = filePaths[i].fileOrgName; // 원본 파일명
+      connection.query("INSERT INTO TBL_SNS_IMAGES (boardNo, filePath, fileName, fileOrgName) VALUES (?, ?, ?, ?)", [boardNo, "../images/", fileName, fileOrgName], (error, results, fields) => {
+        if (error) throw error;
+        console.log("이미지 파일이 성공적으로 삽입되었습니다.");
       });
     }
 
@@ -241,7 +249,7 @@ app.post('/snsWriteBoard.dox', (req, res) => { // 게시글 작성
 
 
 app.post('/snsUserLogin.dox', (req, res) => { // 유저 로그인
-  var map = req.body;
+  let map = req.body;
   connection.query("SELECT * FROM TBL_SNS_USER WHERE USERID = ? AND USERPWD = ?", [map.userId, map.userPwd], (error, results, fields) => {
     if (error || results.length == 0) {
       console.log("로그인 실패");
@@ -255,20 +263,46 @@ app.post('/snsUserLogin.dox', (req, res) => { // 유저 로그인
 });
 
 app.post('/snsUserJoin.dox', (req, res) => { // 유저 회원가입
-  var map = req.body;
-  connection.query("INSERT INTO TBL_SNS_USER (userId, userPwd, userName, profile, profileImage) VALUES (?, ?, ?, ?, ?)", [map.userId, map.userPwd, map.userName, map.profile, map.profileImage], (error, results, fields) => {
-    if (error) throw error;
+  let map = req.body;
+  connection.query("INSERT INTO TBL_SNS_USER (userId, userPwd, userName, profile, profileImage) VALUES (?, ?, ?, ?, ?)",
+    [map.userId, map.userPwd, map.userName, map.profile, map.profileImage], (error, results, fields) => {
+      if (error) throw error;
 
-    res.send(results[0]);
-
-  });
+      res.send({ result: "회원가입이 완료되었습니다." });
+    });
 });
 
 app.get('/searchBoardTitle.dox', (req, res) => { // 게시글 검색
-  var map = req.query;
+  let map = req.query;
   connection.query("SELECT * FROM TBL_SNS_BOARD WHERE title LIKE ?", [`%${map.keyword}%`], (error, results, fields) => {
     if (error) throw error;
     res.send(results);
+  });
+});
+
+app.get('/snsUserIdCheck.dox', (req, res) => { // 유저 아이디 중복 체크
+  let map = req.query;
+  connection.query("SELECT * FROM TBL_SNS_USER WHERE USERID = ?", [map.userId], (error, results, fields) => {
+    if (error) throw error;
+    if (results.length == 0) {
+      res.send({ result: "사용 가능한 아이디입니다." });
+      return;
+    } else {
+      res.send({ result: "중복된 아이디입니다." });
+    }
+  });
+});
+
+app.post('/snsUserEdit.dox', (req, res) => {
+  let map = req.body;
+  connection.query("UPDATE TBL_SNS_USER SET USERNAME = ?, PROFILE = ?, PROFILEIMAGE = ? WHERE USERID = ?", [map.userName, map.profile, map.profileImage, map.userId], (error, results, fields) => {
+    if (error) {
+      console.error('DB에 넣을 TBL_SNS_USER 테이블 업데이트 중 에러: ' + error.stack);
+      res.status(500).send('DB에 넣을 TBL_SNS_USER 테이블 업데이트 쿼리문 에러');
+      res.send({ result: "게시글 수정 실패!" });
+      return;
+    }
+    res.send({ result: "게시글 수정 성공!" });
   });
 });
 
