@@ -29,7 +29,7 @@ export default function View() {
         }
         fetchBoardView();
     }, [boardNo])
-
+    
     const onUpdatePost = () => {
         setIsUpdate(true);
     }
@@ -57,16 +57,18 @@ export default function View() {
                     {!isUpdate ? <h2 className="post-title">{board.title}</h2> : <input className="view-input" placeholder="제목 작성" />}
                     {!isUpdate ? <p className="content-text">{board.content}</p> : <textarea className="view-input" placeholder="내용 작성"></textarea>}
                 </div>
-                {!isUpdate && userId === writerId ?
-                    <div>
-                        <button className="another-btn" onClick={onDeletePost}>삭제</button>
-                        <button className="update-btn" onClick={onUpdatePost}>수정</button>
-                    </div>
-                    :
-                    <div>
-                        <button className="another-btn" onClick={onCancelPost}>취소</button>
-                        <button className="update-btn" onClick={onUpdatePostOk}>확인</button>
-                    </div>}
+                {userId === writerId && <div>
+                    {!isUpdate ?
+                        <div>
+                            <button className="another-btn" onClick={onDeletePost}>삭제</button>
+                            <button className="update-btn" onClick={onUpdatePost}>수정</button>
+                        </div>
+                        :
+                        <div>
+                            <button className="another-btn" onClick={onCancelPost}>취소</button>
+                            <button className="update-btn" onClick={onUpdatePostOk}>확인</button>
+                        </div>}
+                </div>}
             </div>
         </div>
     )
