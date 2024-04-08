@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `tbl_sns_board` (
   `content` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `cdatetime` datetime DEFAULT NULL,
   PRIMARY KEY (`boardNo`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 테이블 데이터 test.tbl_sns_board:~6 rows (대략적) 내보내기
 INSERT INTO `tbl_sns_board` (`boardNo`, `userId`, `title`, `content`, `cdatetime`) VALUES
@@ -36,15 +36,28 @@ INSERT INTO `tbl_sns_board` (`boardNo`, `userId`, `title`, `content`, `cdatetime
 	(3, 'qwe1', '세 번째 게시글', '세 번째 게시글입니다.', '2024-04-05 10:46:54'),
 	(4, 'qwe2', '네 번째 게시글', '네 번째 게시글입니다.', '2024-04-05 10:46:54'),
 	(5, 'qwe2', '다섯 번째 게시글', '다섯 번째 게시글입니다.', '2024-04-05 10:46:55'),
-	(6, 'qwe3', '여섯 번째 게시글', '여섯 번째 게시글입니다.', '2024-04-05 10:46:56');
+	(6, 'qwe3', '여섯 번째 게시글', '여섯 번째 게시글입니다.', '2024-04-05 10:46:56'),
+	(14, NULL, NULL, NULL, '2024-04-08 12:32:23');
+
+-- 테이블 test.tbl_sns_images 구조 내보내기
+CREATE TABLE IF NOT EXISTS `tbl_sns_images` (
+  `fileNo` int NOT NULL AUTO_INCREMENT,
+  `boardNo` int DEFAULT NULL,
+  `filePath` varchar(255) NOT NULL,
+  `fileName` varchar(255) DEFAULT NULL,
+  `fileOrgName` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`fileNo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- 테이블 데이터 test.tbl_sns_images:~0 rows (대략적) 내보내기
 
 -- 테이블 test.tbl_sns_user 구조 내보내기
 CREATE TABLE IF NOT EXISTS `tbl_sns_user` (
   `userId` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `userPwd` varchar(50) DEFAULT NULL,
   `userName` varchar(50) DEFAULT NULL,
-  `follower` int DEFAULT NULL,
-  `following` int DEFAULT NULL,
+  `follower` int DEFAULT '0',
+  `following` int DEFAULT '0',
   `profile` varchar(50) DEFAULT NULL,
   `profileImage` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   PRIMARY KEY (`userId`)

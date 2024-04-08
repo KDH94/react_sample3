@@ -41,3 +41,25 @@
 .content-text {
   margin-bottom: 10px;
 }
+
+.update-btn {
+  float: right;
+  border-radius: 8px;
+  margin-right: 10px;
+}
+
+.view-input {
+  width: 450px;
+  margin-top: 10px;
+}
+
+.another-btn {
+  float: right;
+  border-radius: 8px;
+  margin-right: 10px;
+  background-color: #f00;
+}
+
+.another-btn:hover {
+  background-color: #c00;
+}

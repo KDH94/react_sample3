@@ -159,7 +159,6 @@ app.get('/userIdCheck.dox', (req, res) => {
 // -------------------------------------------------------------------------
 app.get('/snsUserInfo.dox', (req, res) => { // 유저 정보 출력
   var map = req.query;
-  console.log("map==>",map);
   connection.query("SELECT U.*, COUNT(*) AS posts FROM tbl_sns_user U INNER JOIN tbl_sns_board B ON U.userId = B.userId WHERE U.USERID = ?", [map.userId], (error, results, fields) => {
     if (error) throw error;
 
@@ -167,7 +166,6 @@ app.get('/snsUserInfo.dox', (req, res) => { // 유저 정보 출력
       res.send({ result: "사용자 없음" });
     } else {
       res.send(results[0]);
-      console.log("sns유저인포 성공");
     }
   });
 });
@@ -206,15 +204,41 @@ app.get('/snsUserBoardList.dox', (req, res) => { // 해당 유저가 작성한 �
   });
 });
 
-app.get('/snsWriteBoard.dox', (req, res) => { // 게시글 작성
-  var map = req.query;
-  connection.query("INSERT INTO TBL_SNS_BOARD VALUES (NULL, ?, ?, ?)", [map.userId, map.title, map.content], (error, results, fields) => {
+app.post('/snsWriteBoard.dox', (req, res) => { // 게시글 작성
+  const map = req.body;
+
+  console.log("map==>>>>", req.body);
+  // 게시글 정보 삽입
+  connection.query("INSERT INTO TBL_SNS_BOARD VALUES (NULL, ?, ?, ?, NOW())", [map.userId, map.title, map.content], (error, results, fields) => {
     if (error) throw error;
 
-    res.send(results[0]);
+    // 게시글 작성 성공 시
+    const boardNo = results.insertId; // 새로 생성된 게시글의 번호 가져오기
 
+    // 이미지 파일 정보 삽입
+    const fileName = req.body.fileName; // 파일명
+    const fileOrgName = req.body.fileOrgName; // 원본 파일명
+    const filePaths = req.files.map(file => file.path); // 이미지 파일 경로들
+    if (filePaths.length > 0) {
+      // 각 이미지 파일에 대해 반복하여 삽입
+      filePaths.forEach((filePath, index) => {
+        // 각 이미지 파일에 대한 파일명 및 원본 파일명 가져오기
+        const fileIdx = index < fileName.length ? index : fileName.length - 1;
+        const fileNameForDB = fileName[fileIdx];
+        const fileOrgNameForDB = fileOrgName[fileIdx];
+        // TBL_SNS_IMAGES 테이블에 이미지 파일 정보 삽입
+        connection.query("INSERT INTO TBL_SNS_IMAGES (boardNo, filePath, fileName, fileOrgName) VALUES (?, ?, ?, ?)", [boardNo, filePath, fileNameForDB, fileOrgNameForDB], (error, results, fields) => {
+          if (error) throw error;
+          console.log("이미지 파일이 성공적으로 삽입되었습니다.");
+        });
+      });
+    }
+
+    // 클라이언트에게 응답 전송
+    res.send({ message: "게시글 작성 및 이미지 업로드가 완료되었습니다." });
   });
 });
+
 
 app.post('/snsUserLogin.dox', (req, res) => { // 유저 로그인
   var map = req.body;
@@ -243,8 +267,8 @@ app.post('/snsUserJoin.dox', (req, res) => { // 유저 회원가입
 app.get('/searchBoardTitle.dox', (req, res) => { // 게시글 검색
   var map = req.query;
   connection.query("SELECT * FROM TBL_SNS_BOARD WHERE title LIKE ?", [`%${map.keyword}%`], (error, results, fields) => {
-      if (error) throw error;
-      res.send(results);
+    if (error) throw error;
+    res.send(results);
   });
 });
 

@@ -13,14 +13,17 @@ import Menu from "../components/Menu";
 function Navbar() {
     const [showModalWrite, setShowModalWrite] = useState(false);
     const [showOffcanvas, setShowOffcanvas] = useState(false);
+    const [noSearchResults, setNoSearchResults] = useState(false);
     const [userId, setUserId] = useState("");
     const [searchKeyword, setSearchKeyword] = useState("");
     const [searchResults, setSearchResults] = useState([]);
-    const [noSearchResults, setNoSearchResults] = useState(false);
 
     const openModalWrite = () => setShowModalWrite(true);
     const closeModalWrite = () => setShowModalWrite(false);
     const handleOffcanvas = () => setShowOffcanvas(!showOffcanvas);
+
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [previewImages, setPreviewImages] = useState([]);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -38,8 +41,8 @@ function Navbar() {
         async function performSearch() {
             try {
                 // 검색 결과를 받아옵니다.
-                const res = await fetch(`http://localhost:4000/searchBoardTitle.dox?keyword=${searchKeyword}`);
-                const jsonData = await res.json();
+                const response = await fetch(`http://localhost:4000/searchBoardTitle.dox?keyword=${searchKeyword}`);
+                const jsonData = await response.json();
                 setSearchResults(jsonData);
 
                 // 검색 결과가 없는 경우 메시지를 표시합니다.
@@ -55,14 +58,60 @@ function Navbar() {
         }
     }, [searchKeyword]);
 
+    const handleFileUpload = (e) => {
+        const files = Array.from(e.target.files);
+
+        if (files.length > 3) {
+            // 4개 이상의 파일이 선택된 경우
+            alert('최대 3개까지 파일을 업로드할 수 있습니다!');
+            // 파일 선택을 초기화
+            e.target.value = null;
+            // 선택된 파일과 미리보기를 초기화
+            setSelectedFiles([]);
+            setPreviewImages([]);
+            return;
+        }
+
+        const selectedFilesUrls = files.map(file => URL.createObjectURL(file)); // 선택한 파일들의 미리보기 생성
+
+        setSelectedFiles(files);
+        setPreviewImages(selectedFilesUrls);
+    };
+
     const submitWrite = async () => {
         const title = document.querySelector("#title").value;
         const content = document.querySelector("#content").value;
 
         try {
-            const response = await fetch(`/snsWriteBoard.dox?userId=${userId}&title=${title}&content=${content}`);
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('content', content);
+            formData.append('image', selectedFiles);
+
+            const now = new Date();
+            const year = now.getFullYear().toString().slice(-2);
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+
+            const timestamp = `${year}${month}${day}${hours}${minutes}${seconds}`;
+
+            selectedFiles.forEach(file => {
+                const fileName = `${timestamp}_${file.name}`; // 저장되는 순간의 시간(YYMMDDHHmmss)을 파일 이름과 같이 저장
+                formData.append('fileName', fileName);
+                formData.append('fileOrgName', file.name); // 원본 파일명은 같이 저장
+            });
+
+            const response = await fetch(`http://localhost:4000/snsWriteBoard.dox?userId=${userId}`, {
+                method: 'POST',
+                body: formData,
+            });
+
             const jsonData = await response.json();
-            console.log(jsonData);
+            console.log("formData===>>>", formData);
+            alert(jsonData.message);
             navigate('/'); // 작성 후에 홈 화면으로 이동
         } catch (error) {
             console.error("Error:", error);
@@ -112,19 +161,20 @@ function Navbar() {
                 </nav>
             </div>
 
+            {/* 게시글 검색 */}
             <Offcanvas show={showOffcanvas} onHide={handleOffcanvas} placement="start">
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>검색</Offcanvas.Title>
+                    <Offcanvas.Title><strong>검색</strong></Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     <input
                         type="text"
                         placeholder="검색어를 입력하세요"
-                        className="form-control"
+                        className="form-control mb-3"
                         value={searchKeyword}
                         onChange={(e) => setSearchKeyword(e.target.value)}
                     />
-                    {noSearchResults && <p>검색된 결과가 없습니다!</p>}
+                    {noSearchResults && <strong>검색된 결과가 없습니다!</strong>}
                     {/* 검색 결과 출력 */}
                     {searchResults.map(item => (
                         <div key={item.boardNo}>
@@ -134,6 +184,7 @@ function Navbar() {
                 </Offcanvas.Body>
             </Offcanvas>
 
+            {/* 게시글 작성 */}
             <Modal show={showModalWrite} onHide={closeModalWrite}>
                 <Modal.Header closeButton>
                     <Modal.Title>글 작성</Modal.Title>
@@ -141,6 +192,10 @@ function Navbar() {
                 <Modal.Body>
                     <input id="title" type="text" placeholder="제목 작성" />
                     <textarea id="content" placeholder="내용 작성" />
+                    <input type="file" accept="image/*" multiple onChange={handleFileUpload} />
+                    {previewImages.map((image, index) => (
+                        <img key={index} src={image} alt={`Uploaded ${index}`} style={{ width: '100px', height: '100px', marginRight: '10px' }} />
+                    ))}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={closeModalWrite}>
