@@ -24,6 +24,18 @@
     overflow: hidden;
     margin-right: 20px;
 }
+.profile-image:hover {
+    cursor: pointer;
+    width: 110px;
+    height: 110px;
+    transition: ease-in 0.5s;
+}
+.profile-image:not(:hover) {
+    width: 100px;
+    height: 100px;
+    transition: ease-out 0.5s;
+}
+
 
 .profile-image img {
     width: 100%;

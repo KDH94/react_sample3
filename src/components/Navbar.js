@@ -17,10 +17,16 @@ function Navbar() {
     const [userId, setUserId] = useState("");
     const [searchKeyword, setSearchKeyword] = useState("");
     const [searchResults, setSearchResults] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
 
-    const openModalWrite = () => setShowModalWrite(true);
-    const closeModalWrite = () => setShowModalWrite(false);
     const handleOffcanvas = () => setShowOffcanvas(!showOffcanvas);
+    const openModalWrite = () => {
+        setShowModalWrite(true);
+        setPreviewImages([]);
+    };
+    const closeModalWrite = () => setShowModalWrite(false);
+    const handleMouseEnter = () => setIsOpen(true);
+    const handleMouseLeave = () => setIsOpen(false);
 
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [previewImages, setPreviewImages] = useState([]);
@@ -77,16 +83,16 @@ function Navbar() {
         setSelectedFiles(files);
         setPreviewImages(selectedFilesUrls);
     };
-
     const submitWrite = async () => {
         const title = document.querySelector("#title").value;
         const content = document.querySelector("#content").value;
 
         try {
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('content', content);
-            formData.append('image', selectedFiles);
+            const map = {};
+            map.title = title;
+            map.content = content;
+            map.image = selectedFiles;
+            map.userId = userId;
 
             const now = new Date();
             const year = now.getFullYear().toString().slice(-2);
@@ -97,20 +103,40 @@ function Navbar() {
             const seconds = now.getSeconds().toString().padStart(2, '0');
 
             const timestamp = `${year}${month}${day}${hours}${minutes}${seconds}`;
+            let files = [];
+            for (const file of selectedFiles) {
+                const fileName = `${timestamp}_${file.name}`; // 저장되는 순간의 시간(YYMMDDHHmmss)을 파일 이름과 같이 저장     
+                files.push({ fileName: fileName, fileOrgName: file.name });
+                const imgformData = new FormData();
+                imgformData.append('file', file, fileName);
+                try {
+                    const response = await fetch('http://localhost:4000/upload', {
+                        method: 'POST',
+                        body: imgformData
+                    });
 
-            selectedFiles.forEach(file => {
-                const fileName = `${timestamp}_${file.name}`; // 저장되는 순간의 시간(YYMMDDHHmmss)을 파일 이름과 같이 저장
-                formData.append('fileName', fileName);
-                formData.append('fileOrgName', file.name); // 원본 파일명은 같이 저장
-            });
+                    if (!response.ok) {
+                        throw new Error('이미지 업로드에 실패했습니다.');
+                    }
 
-            const response = await fetch(`http://localhost:4000/snsWriteBoard.dox?userId=${userId}`, {
+                    const responseData = await response.json();
+                    alert(responseData); // 업로드 결과 출력
+                } catch (error) {
+                    console.error('이미지 업로드 오류:', error.message);
+                    // 오류 처리
+                }
+            }
+            map.files = files;
+            const response = await fetch(`http://localhost:4000/snsWriteBoard.dox`, {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(map)
             });
 
             const jsonData = await response.json();
-            console.log("formData===>>>", formData);
+            console.log("업로드 map===>>>", map);
             alert(jsonData.message);
             navigate('/'); // 작성 후에 홈 화면으로 이동
         } catch (error) {
@@ -129,37 +155,37 @@ function Navbar() {
 
     return (
         <>
-            <div className="nav-container">
-                <nav className='nav flex-column'>
-                    <ul className='link-navbar'>
-                        <li className={location.pathname === "/" ? "nav-item active" : "nav-item"}>
-                            <Link to={"/"} className="nav-link"><HomeIcon width="20" height="20" /> 홈</Link>
-                        </li>
-                        <li className={location.pathname === "/profile" ? "nav-item active" : "nav-item"}>
-                            {sessionStorage.getItem("userId") != null &&
-                                <Link to={"/profile"} className="nav-link"><ProfileIcon width="20" height="20" /> 프로필</Link>}
-                        </li>
-                        <li className="nav-item">
-                            <Link to="#" className="nav-link" onClick={handleOffcanvas}><SearchIcon width="20" height="20" /> 검색</Link>
-                        </li>
-                        <li className={location.pathname === "/login" ? "nav-item active" : "nav-item"}>
-                            {sessionStorage.getItem("userId") == null ?
-                                <Link to={"/login"} className="nav-link">
-                                    <LoginIcon width="20" height="20" /> 로그인
-                                </Link> :
-                                <Link className="nav-link" onClick={onLogout}>
-                                    <LogoutIcon width="20" height="20" /> 로그아웃
-                                </Link>}
-                        </li>
-                        <li className="nav-item">
-                            {sessionStorage.getItem("userId") != null &&
-                                <Link className="nav-link" onClick={openModalWrite}>
-                                    <WriteIcon width="20" height="20" /> 글 작성
-                                </Link>}
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+            <nav className={`nav ${isOpen ? 'open' : ''} flex-column`}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}>
+                <ul className='link-navbar'>
+                    <li className={location.pathname === "/" ? "nav-item active" : "nav-item"}>
+                        <Link to={"/"} className="nav-link"><HomeIcon width="20" height="20" /> 홈</Link>
+                    </li>
+                    <li className={location.pathname === "/profile" ? "nav-item active" : "nav-item"}>
+                        {sessionStorage.getItem("userId") != null &&
+                            <Link to={"/profile"} className="nav-link"><ProfileIcon width="20" height="20" /> 프로필</Link>}
+                    </li>
+                    <li className="nav-item">
+                        <Link to="#" className="nav-link" onClick={handleOffcanvas}><SearchIcon width="20" height="20" /> 검색</Link>
+                    </li>
+                    <li className={location.pathname === "/login" ? "nav-item active" : "nav-item"}>
+                        {sessionStorage.getItem("userId") == null ?
+                            <Link to={"/login"} className="nav-link">
+                                <LoginIcon width="20" height="20" /> 로그인
+                            </Link> :
+                            <Link className="nav-link" onClick={onLogout}>
+                                <LogoutIcon width="20" height="20" /> 로그아웃
+                            </Link>}
+                    </li>
+                    <li className="nav-item">
+                        {sessionStorage.getItem("userId") != null &&
+                            <Link className="nav-link" onClick={openModalWrite}>
+                                <WriteIcon width="20" height="20" /> 글 작성
+                            </Link>}
+                    </li>
+                </ul>
+            </nav>
 
             {/* 게시글 검색 */}
             <Offcanvas show={showOffcanvas} onHide={handleOffcanvas} placement="start">
@@ -194,7 +220,7 @@ function Navbar() {
                     <textarea id="content" placeholder="내용 작성" />
                     <input type="file" accept="image/*" multiple onChange={handleFileUpload} />
                     {previewImages.map((image, index) => (
-                        <img key={index} src={image} alt={`Uploaded ${index}`} style={{ width: '100px', height: '100px', marginRight: '10px' }} />
+                        <img key={index} src={image} alt={`Uploaded ${index}`} style={{ width: '140px', height: '140px', marginRight: '10px', marginBottom: '5px' }} />
                     ))}
                 </Modal.Body>
                 <Modal.Footer>
