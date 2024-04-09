@@ -53,13 +53,35 @@
   margin-top: 10px;
 }
 
-.another-btn {
-  float: right;
-  border-radius: 8px;
-  margin-right: 10px;
+.delete-btn {
   background-color: #f00;
 }
 
-.another-btn:hover {
+.delete-btn:hover {
   background-color: #c00;
+}
+
+.cancel-btn {
+  background-color: #aaa;
+}
+
+.cancel-btn:hover {
+  background-color: #777;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 300px; /* 이미지가 표시될 기본 높이 */
+  background-color: black; /* 이미지가 부족한 영역을 검은색으로 채움 */
+  overflow: hidden; /* 이미지가 부모 요소를 벗어나지 않도록 함 */
+}
+
+.image-container img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 100%; /* 이미지의 최소 너비를 부모 요소의 너비로 설정하여 이미지가 확대되도록 함 */
+  min-height: 100%; /* 이미지의 최소 높이를 부모 요소의 높이로 설정하여 이미지가 확대되도록 함 */
 }

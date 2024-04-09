@@ -1,7 +1,7 @@
 import './Navbar.css';
 import { Modal, Button, Offcanvas } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ReactComponent as HomeIcon } from "../assets/home_icon.svg";
 import { ReactComponent as ProfileIcon } from "../assets/profile_icon.svg";
 import { ReactComponent as SearchIcon } from "../assets/search_icon.svg";
@@ -31,7 +31,6 @@ function Navbar() {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [previewImages, setPreviewImages] = useState([]);
 
-    const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
@@ -119,8 +118,8 @@ function Navbar() {
                         throw new Error('이미지 업로드에 실패했습니다.');
                     }
 
-                    const responseData = await response.json();
-                    alert(responseData); // 업로드 결과 출력
+                    await response.json();
+                    //alert(responseData); // 업로드 결과 출력
                 } catch (error) {
                     console.error('이미지 업로드 오류:', error.message);
                     // 오류 처리
@@ -135,10 +134,11 @@ function Navbar() {
                 body: JSON.stringify(map)
             });
 
-            const jsonData = await response.json();
-            console.log("업로드 map===>>>", map);
-            alert(jsonData.message);
-            navigate('/'); // 작성 후에 홈 화면으로 이동
+            await response.json();
+            //console.log("업로드 map===>>>", map);
+            //alert(jsonData.message);
+            //navigate('/');
+            setShowModalWrite(false);
         } catch (error) {
             console.error("Error:", error);
         }

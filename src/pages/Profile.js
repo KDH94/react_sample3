@@ -63,8 +63,7 @@ function Profile() {
                 },
                 body: JSON.stringify(map)
             });
-            const jsonData = await response.json();
-            <div></div>
+            await response.json();
             //alert(jsonData.result);
             setShowModalUpdate(false); // 모달창 끄기
         } catch (error) {
@@ -124,8 +123,6 @@ function Profile() {
                     <Modal.Title>프로필 수정</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {/* over here */}
-
                     <label htmlFor="userName">이름:</label>
                     <input type="text" id="userName" name="userName" value={userInfo.userName} onChange={handleChange} />
                     <label htmlFor="profile">프로필:</label>

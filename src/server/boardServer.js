@@ -42,7 +42,7 @@ const upload = multer({ storage: storage });
 
 app.post('/upload', upload.single('file'), (req, res) => {
   console.log('파일', req.file);
-  res.send({result : "success"});
+  res.send({ result: "success" });
 });
 
 connection.connect((err) => {
@@ -236,7 +236,7 @@ app.post('/snsWriteBoard.dox', (req, res) => { // 게시글 작성
     for (let i = 0; i < filePaths.length; i++) {
       const fileName = filePaths[i].fileName; // 파일명
       const fileOrgName = filePaths[i].fileOrgName; // 원본 파일명
-      connection.query("INSERT INTO TBL_SNS_IMAGES (boardNo, filePath, fileName, fileOrgName) VALUES (?, ?, ?, ?)", [boardNo, "../images/", fileName, fileOrgName], (error, results, fields) => {
+      connection.query("INSERT INTO TBL_SNS_IMAGES (boardNo, filePath, fileName, fileOrgName) VALUES (?, ?, ?, ?)", [boardNo, "img/", fileName, fileOrgName], (error, results, fields) => {
         if (error) throw error;
         console.log("이미지 파일이 성공적으로 삽입되었습니다.");
       });
