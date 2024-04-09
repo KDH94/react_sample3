@@ -212,7 +212,7 @@ function Navbar() {
 
             {/* 게시글 작성 */}
             <Modal show={showModalWrite} onHide={closeModalWrite}>
-                <Modal.Header closeButton>
+                <Modal.Header>
                     <Modal.Title>글 작성</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
