@@ -8,6 +8,7 @@ import { ReactComponent as SearchIcon } from "../assets/search_icon.svg";
 import { ReactComponent as WriteIcon } from "../assets/write_icon.svg";
 import { ReactComponent as LoginIcon } from "../assets/login_icon.svg";
 import { ReactComponent as LogoutIcon } from "../assets/logout_icon.svg";
+import { ReactComponent as ToTopIcon } from "../assets/toTop_icon.svg";
 import Menu from "../components/Menu";
 
 function Navbar() {
@@ -153,6 +154,10 @@ function Navbar() {
         }
     }
 
+    const handleToTopClick = () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     return (
         <>
             <nav className={`nav ${isOpen ? 'open' : ''} flex-column`}
@@ -186,6 +191,9 @@ function Navbar() {
                     </li>
                 </ul>
             </nav>
+            <button className='to-top-btn' onClick={handleToTopClick}>
+                <ToTopIcon />
+            </button>
 
             {/* 게시글 검색 */}
             <Offcanvas show={showOffcanvas} onHide={handleOffcanvas} placement="start">

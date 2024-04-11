@@ -84,3 +84,14 @@
 .modal-footer .btn-secondary:hover {
   color: #777;
 }
+
+.to-top-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.0);
+  border-radius: 5px;
+}
+.to-top-btn:hover {
+  background-color: rgba(0, 0, 0, 0.0);
+}

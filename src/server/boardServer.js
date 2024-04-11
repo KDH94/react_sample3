@@ -7,6 +7,8 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const fs = require('fs-extra');
+const socketio = require('socket.io')
+const http = require('http')
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -78,11 +80,11 @@ app.get('/snsUserInfo.dox', (req, res) => { // 유저 정보 출력
 
 app.get('/snsBoardList.dox', (req, res) => { // 게시글 목록 출력
   let map = req.query;
-  connection.query("SELECT * FROM TBL_SNS_BOARD", (error, results, fields) => {
+  connection.query("SELECT B.*, DATE_FORMAT(CDATETIME, '%y년 %c월 %e일 %H시 %i분 %s초') AS cdate FROM TBL_SNS_BOARD B ORDER BY cdate DESC", (error, results, fields) => {
     if (error) throw error;
 
     if (results.length == 0) {
-      res.send({ result: "게시글 없음" });
+      res.send({ result: "게시글이 없습니다." });
     } else {
       res.send(results);
     }
@@ -95,7 +97,7 @@ app.get('/snsImagesView.dox', (req, res) => { // 지정한 게시글의 이미�
     if (error) throw error;
 
     if (results.length == 0) {
-      res.send({ result: "이미지 없음" });
+      res.send({ result: "fail" });
     } else {
       res.send(results);
     }
@@ -116,7 +118,7 @@ app.get('/snsUserBoardList.dox', (req, res) => { // 해당 유저가 작성한 �
     if (error) throw error;
 
     if (results.length == 0) {
-      res.send({ result: "게시글 없음" });
+      res.send({ result: "게시글이 없습니다." });
     } else {
       res.send(results);
     }
@@ -151,15 +153,13 @@ app.post('/snsWriteBoard.dox', (req, res) => { // 게시글 작성
 });
 
 
-app.post('/snsUserLogin.dox', (req, res) => { // 유저 로그인
+app.post('/snsUserLogin.dox', (req, res) => { // 유저 로그인 & 회원 탈퇴 시 확인용
   let map = req.body;
   connection.query("SELECT * FROM TBL_SNS_USER WHERE USERID = ? AND USERPWD = ?", [map.userId, map.userPwd], (error, results, fields) => {
     if (error || results.length == 0) {
-      console.log("로그인 실패");
       res.send({ result: "fail" });
       return;
     } else {
-      console.log("로그인 성공");
       res.send({ result: "success", map: results[0] });
     }
   });
@@ -271,6 +271,17 @@ app.get('/snsBoardRemove.dox', (req, res) => {
   });
 });
 
+app.post('/snsUserRemove.dox', (req, res) => { // 유저 탈퇴
+  let map = req.body;
+  connection.query("DELETE FROM TBL_SNS_USER WHERE USERID = ?", [map.userId], (error, results, fields) => {
+    if (error || results.length == 0) {
+      res.send({ result: "fail" });
+      return;
+    } else {
+      res.send({result: "success", map: results[0]});
+    }
+  });
+});
 
 app.listen(4000, () => {
   console.log('서버가 실행 중입니다.');

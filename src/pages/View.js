@@ -76,9 +76,9 @@ export default function View() {
 
             const timestamp = `${year}${month}${day}${hours}${minutes}${seconds}`;
             let files = [];
-            for(const file of selectedFiles) {
+            for (const file of selectedFiles) {
                 const fileName = `${timestamp}_${file.name}`;
-                files.push({fileName: fileName, fileOrgName: file.name });
+                files.push({ fileName: fileName, fileOrgName: file.name });
                 const imgformData = new FormData();
                 imgformData.append('file', file, fileName);
                 try {
@@ -102,7 +102,7 @@ export default function View() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(map)
             });
-            
+
             await response.json();
             onCancelBtn();
         } catch (error) {
@@ -154,10 +154,12 @@ export default function View() {
 
     const closeModal = () => {
         setModalShow(false);
-        setModalImage(null);
+        setTimeout(()=>{
+            setModalImage(null);
+        }, 100);
     }
 
-    console.log("이미지리스트===>", imageList);
+    //console.log("이미지리스트===>", imageList);
     return (
         <div className="view-container">
             <div className="post">

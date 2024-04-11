@@ -1,5 +1,66 @@
 /* src/pages/Home.css */
 .container {
-    max-width: 800px;
-    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 100px; /* 각 게시글 간의 간격 설정 */
+    padding: 100px;
+}
+
+.post {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 300px; /* 게시글의 너비 조정 */
+    padding: 20px;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.username {
+    font-weight: bold;
+    margin: 0;
+}
+
+.posted-time {
+    color: #777;
+    margin: 0;
+}
+
+.post-content {
+    margin-bottom: 10px;
+}
+
+.post-title {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.content-text {
+    margin-bottom: 10px;
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 200px; /* 이미지 컨테이너의 높이 조정 */
+    background-color: black;
+    overflow: hidden;
+}
+
+.image-container img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.content-icon {
+    float: right;
+    cursor: pointer;
 }
