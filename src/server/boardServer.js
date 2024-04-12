@@ -80,7 +80,7 @@ app.get('/snsUserInfo.dox', (req, res) => { // 유저 정보 출력
 
 app.get('/snsBoardList.dox', (req, res) => { // 게시글 목록 출력
   let map = req.query;
-  connection.query("SELECT B.*, DATE_FORMAT(CDATETIME, '%y년 %c월 %e일 %H시 %i분 %s초') AS cdate FROM TBL_SNS_BOARD B ORDER BY cdate DESC", (error, results, fields) => {
+  connection.query("SELECT boardNo, b.userId, title, content,	DATE_FORMAT(CDATETIME, '%y년 %c월 %e일 %H시 %i분 %s초') AS cdate, profileImage FROM tbl_sns_board b INNER JOIN tbl_sns_user u ON b.userId = u.userId ORDER BY cDateTime DESC", (error, results, fields) => {
     if (error) throw error;
 
     if (results.length == 0) {
@@ -175,9 +175,9 @@ app.post('/snsUserJoin.dox', (req, res) => { // 유저 회원가입
     });
 });
 
-app.get('/searchBoardTitle.dox', (req, res) => { // 게시글 검색
+app.get('/searchBoardList.dox', (req, res) => { // 게시글 검색
   let map = req.query;
-  connection.query("SELECT * FROM TBL_SNS_BOARD WHERE title LIKE ?", [`%${map.keyword}%`], (error, results, fields) => {
+  connection.query("SELECT * FROM TBL_SNS_BOARD WHERE title LIKE ? OR content LIKE ?", [`%${map.keyword}%`, `%${map.keyword}%`], (error, results, fields) => {
     if (error) throw error;
     res.send(results);
   });
