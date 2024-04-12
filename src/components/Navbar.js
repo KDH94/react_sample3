@@ -47,7 +47,7 @@ function Navbar() {
         async function performSearch() {
             try {
                 // 검색 결과를 받아옵니다.
-                const response = await fetch(`http://localhost:4000/searchBoardTitle.dox?keyword=${searchKeyword}`);
+                const response = await fetch(`http://localhost:4000/searchBoardList.dox?keyword=${searchKeyword}`);
                 const jsonData = await response.json();
                 setSearchResults(jsonData);
 

@@ -23,6 +23,7 @@
 .username {
     font-weight: bold;
     margin: 0;
+    font-size:17px;
 }
 
 .posted-time {
@@ -63,4 +64,43 @@
 .content-icon {
     float: right;
     cursor: pointer;
+}
+
+.profile-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: -130px;
+}
+.profile-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.comment-list {
+    margin-top: 20px;
+}
+.comment-list input {
+    width: 420px;
+    font-size: 15px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+}
+.comment-list button {
+    width: auto;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 0;
+    margin-left: 5px;
+    background-color: #fff;
+    color: rgb(100, 150, 200);
+}
+.comment-list button:hover {
+    background-color: #fff;
+    color: rgb(50, 100, 150);
 }
